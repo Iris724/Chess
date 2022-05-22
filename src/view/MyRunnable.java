@@ -59,10 +59,10 @@ public class MyRunnable implements Runnable{
 
     }
 
-    private void whiteTurn() {
+    public void whiteTurn() {
         statusLabel.setText("WHITE'S ROUND");
     }
-    private void blackTurn(){
+    public void blackTurn(){
         statusLabel.setText("BLACK'S ROUND");
     }
 

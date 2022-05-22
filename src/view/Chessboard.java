@@ -1,6 +1,7 @@
 package view;
 
-
+import controller.GameController;
+import com.sun.xml.internal.ws.api.pipe.ClientPipeAssemblerContext;
 import model.*;
 import controller.ClickController;
 
@@ -8,8 +9,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.*;
 
-import static view.ChessGameFrame.changeLabel;
+import static view.ChessGameFrame.*;
+import static view.ChessGameFrame.statusLabel;
 
 /**
  * 这个类表示面板上的棋盘组件对象
@@ -34,11 +37,14 @@ public class Chessboard extends JComponent {
 
     private static final int CHESSBOARD_SIZE = 8;
 
+
     private final ChessComponent[][] chessComponents = new ChessComponent[CHESSBOARD_SIZE][CHESSBOARD_SIZE];
     private static ChessColor currentColor = ChessColor.WHITE;
     //all chessComponents in this chessboard are shared only one model controller
     private final ClickController clickController = new ClickController(this);
     public final int CHESS_SIZE;
+    public boolean whiteWin;
+    public boolean blackWin;
 
 
     public static void setCurrentColor(ChessColor currentColor) {
@@ -48,6 +54,7 @@ public class Chessboard extends JComponent {
     public int getCHESS_SIZE() {
         return CHESS_SIZE;
     }
+
 
     public Chessboard(int width, int height) {
         setLayout(null); // Use absolute layout.
@@ -124,9 +131,13 @@ public class Chessboard extends JComponent {
         return chessComponents;
     }
 
+
     public static ChessColor getCurrentColor() {
         return currentColor;
     }
+
+
+
 
     public void putChessOnBoard(ChessComponent chessComponent) {
         int row = chessComponent.getChessboardPoint().getX(), col = chessComponent.getChessboardPoint().getY();
@@ -201,7 +212,11 @@ public class Chessboard extends JComponent {
             changeLabel();
         } else if (!(ifPassBy(chess1,chess2))) {
             if (chess2 instanceof KingChessComponent){
-
+                if (currentColor == ChessColor.BLACK) {
+                    blackWin = true;
+                }else if (currentColor == ChessColor.WHITE){
+                    whiteWin = true;
+                }
             }
             if (!(chess2 instanceof EmptySlotComponent)) {
                 remove(chess2);
@@ -219,10 +234,38 @@ public class Chessboard extends JComponent {
             storeThisStep(row1, col1, row2, col2);
             chess1.repaint();
             chess2.repaint();
+            String warning1 = "The black win!";
+            String warning2 = "The white win!";
+            if (blackWin){
+                dead2(warning1);
+                Reset();
+                storingSteps.clear();
+                storingSteps.add("R0H0B0Q0K0B0H0R0#P0P0P0P0P0P0P0P0#e0e0e0e0e0e0e0e0#e0e0e0e0e0e0e0e0#e0e0e0e0e0e0e0e0#e0e0e0e0e0e0e0e0#p0p0p0p0p0p0p0p0#r0h0b0q0k0b0h0r0#1#0000#");
+
+                setCurrentColor(ChessColor.BLACK);
+                whiteTurn();
+                repaint();
+                blackWin = false;
+            }else if (whiteWin){
+                dead2(warning2);
+                Reset();
+                storingSteps.clear();
+                storingSteps.add("R0H0B0Q0K0B0H0R0#P0P0P0P0P0P0P0P0#e0e0e0e0e0e0e0e0#e0e0e0e0e0e0e0e0#e0e0e0e0e0e0e0e0#e0e0e0e0e0e0e0e0#p0p0p0p0p0p0p0p0#r0h0b0q0k0b0h0r0#1#0000#");
+
+                setCurrentColor(ChessColor.WHITE);
+                blackTurn();
+                whiteWin = false;
+            }
+
             changeLabel();
         }
     }
-
+    public void whiteTurn() {
+        statusLabel.setText("WHITE'S ROUND");
+    }
+    public void blackTurn(){
+        statusLabel.setText("BLACK'S ROUND");
+    }
     public void redo(){
         //悔棋步骤可能也会存进storingSteps里面
 
@@ -330,7 +373,7 @@ public class Chessboard extends JComponent {
     }
 
     public void swapColor() {
-        currentColor = currentColor == ChessColor.BLACK ? ChessColor.WHITE : ChessColor.BLACK;
+            currentColor = currentColor == ChessColor.BLACK ? ChessColor.WHITE : ChessColor.BLACK;
     }
 
     private void initRookOnBoard(int row, int col, ChessColor color) {
@@ -592,10 +635,10 @@ public class Chessboard extends JComponent {
 
 
 
-    public ChessboardPoint findCheckKing (ChessComponent king) {
+    public ChessboardPoint findCheckKing () {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                king = chessComponents[i][j];
+                ChessComponent king = chessComponents[i][j];
                 if (king instanceof KingChessComponent && king.getChessColor() != currentColor){
                     return new ChessboardPoint(i,j);
                 }
@@ -603,6 +646,14 @@ public class Chessboard extends JComponent {
         }
         return null;
     }
+
+//    public boolean ifChecked(ChessComponent[][] chessComponents,ChessComponent attacker){
+//        if (attacker.canMoveTo(chessComponents,findCheckKing())){
+//            JOptionPane.showMessageDialog(this, "CHECKED!");
+//
+//        }
+//    }
+
 
 }
 

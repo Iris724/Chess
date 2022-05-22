@@ -63,8 +63,8 @@ public class ChessGameFrame extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); //设置程序关闭按键，如果点击右上方的叉就游戏全部关闭了
         setLayout(null);
 
-//        ct = this.getContentPane();
-//        this.setLayout(null);
+        audioPlayWave1.start();
+        audioPlayWave1.Stop();
 
         addChessboard();
         addLabel();
@@ -277,13 +277,12 @@ public class ChessGameFrame extends JFrame {
 
         play.addActionListener(e -> {
             System.out.println("play audio");
-            audioPlayWave1.start();
+            audioPlayWave1.Play();
         });
         stop.addActionListener(e -> {
 
             System.out.println("stop audio");
-            audioPlayWave1.start();
-            audioPlayWave1.stop();
+            audioPlayWave1.Stop();
         });
 
         menuBar.add(menu);
@@ -373,18 +372,19 @@ public class ChessGameFrame extends JFrame {
         }
     }
 
+    public void dead1(String warning){
+        JOptionPane window = new JOptionPane();
+        ImageIcon icon = new ImageIcon("./images/Win.png");
+        JOptionPane.showMessageDialog(null,warning,"Winner,",JOptionPane.PLAIN_MESSAGE,icon);
+    }
 
+    public static void dead2(String warning) {
+        int result = JOptionPane.showOptionDialog(null, warning, "Next Step", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, new String[]{"Restart the game"}, null);
+        if (result == JOptionPane.OK_OPTION) {
+            System.exit(0);
+            System.exit(0);
+        }
+    }
 }
 
-//class BackgroundPanel extends JPanel {
-//    Image im;
-//    public BackgroundPanel(Image im) {
-//        this.im=im;
-//        this.setOpaque(true);
-//    }
-//    protected void paintComponent(Graphics g) {
-//        super.paintComponents(g);
-//        g.drawImage(im,0,0,this.getWidth(),this.getHeight(),this);
-//    }
-//}
 
