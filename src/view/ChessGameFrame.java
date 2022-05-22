@@ -78,51 +78,51 @@ public class ChessGameFrame extends JFrame {
         addBackground();
     }
 
-        /**
-         * 在游戏面板中添加棋盘
-         */
-        private void addChessboard() {
-            Chessboard chessboard = new Chessboard(CHESSBOARD_SIZE, CHESSBOARD_SIZE);
-            gameController = new GameController(chessboard);
-            chessboard.setLocation(HEIGTH / 10, HEIGTH / 10);
-            this.setVisible(true);
-            add(chessboard);
-        }
+    /**
+     * 在游戏面板中添加棋盘
+     */
+    private void addChessboard() {
+        Chessboard chessboard = new Chessboard(CHESSBOARD_SIZE, CHESSBOARD_SIZE);
+        gameController = new GameController(chessboard);
+        chessboard.setLocation(HEIGTH / 10, HEIGTH / 10);
+        this.setVisible(true);
+        add(chessboard);
+    }
 
-        /**
-         * 在游戏面板中添加标签
-         */
-        private void addLabel() {
-            statusLabel.setText("WHITE'S ROUND");
-            statusLabel.setLocation(10, 10);
-            statusLabel.setSize(300, 60);
-            statusLabel.setFont(new Font("Rockwell", Font.BOLD, 20));
-            statusLabel.setForeground(Color.WHITE);
-            this.setVisible(true);
-            add(statusLabel);
-        }
+    /**
+     * 在游戏面板中添加标签
+     */
+    private void addLabel() {
+        statusLabel.setText("WHITE'S ROUND");
+        statusLabel.setLocation(10, 10);
+        statusLabel.setSize(300, 60);
+        statusLabel.setFont(new Font("Rockwell", Font.BOLD, 20));
+        statusLabel.setForeground(Color.WHITE);
+        this.setVisible(true);
+        add(statusLabel);
+    }
 
 
-        /**
-         * 在游戏面板中增加一个按钮
-         */
+    /**
+     * 在游戏面板中增加一个按钮
+     */
 
-        //load
-        private void addLoadButton() {
-            button1.setLocation(HEIGTH, HEIGTH / 10);
-            button1.setSize(200, 40);
-            button1.setFont(new Font("Rockwell", Font.BOLD, 20));
-            this.setVisible(true);
-            add(button1);
-            button1.addActionListener(e -> {
-                System.out.println("Click load");
-                String path = JOptionPane.showInputDialog(this, "Input Path here");
-                gameController.loadGameFromFile(path);
-            });
-        }
+    //load
+    private void addLoadButton() {
+        button1.setLocation(HEIGTH, HEIGTH / 10);
+        button1.setSize(200, 40);
+        button1.setFont(new Font("Rockwell", Font.BOLD, 20));
+        this.setVisible(true);
+        add(button1);
+        button1.addActionListener(e -> {
+            System.out.println("Click load");
+            String path = JOptionPane.showInputDialog(this, "Input Path here");
+            gameController.loadGameFromFile(path);
+        });
+    }
 
-        //FIXME: LOAD TXT SHOULD HAVE CHANGES
-        //reset
+    //FIXME: LOAD TXT SHOULD HAVE CHANGES
+    //reset
     private void addResetButton() {
         button2.addActionListener((e) -> {
             System.out.println("reset");
@@ -137,8 +137,8 @@ public class ChessGameFrame extends JFrame {
     }
 
 
-        //FIXME: THE UNMOVED SITUATION WILL BE STORED AS NULL
-        //save
+    //FIXME: THE UNMOVED SITUATION WILL BE STORED AS NULL
+    //save
     private void addSaveButton() {
         button3.addActionListener((e) -> {
             //JOptionPane.
@@ -156,7 +156,7 @@ public class ChessGameFrame extends JFrame {
         add(button3);
     }
 
-        //redo
+    //redo
     private void addRedoButton() {
         button4.addActionListener(e -> {
             System.out.println("Click Redo");//debugger
@@ -171,12 +171,12 @@ public class ChessGameFrame extends JFrame {
     }
 
 
-        //playback
+    //playback
     private void addPlayBackButton() {
-        MyRunnable playBack = new MyRunnable(chessGameFrame);
         button5.addActionListener(e -> {
             System.out.println("Play back");
-            playBack.run();
+            Thread newTry = new Thread(new MyRunnable(this));
+            newTry.start();
         });
         button5.setLocation(HEIGTH, HEIGTH / 10 + 200);
         button5.setSize(200, 40);
@@ -186,7 +186,7 @@ public class ChessGameFrame extends JFrame {
     }
 
 
-        // change theme
+    // change theme
     private void addChangeButton() {
         change.setLocation(HEIGTH, HEIGTH / 10 + 300);
         change.setSize(200, 40);
@@ -200,7 +200,7 @@ public class ChessGameFrame extends JFrame {
                 ImageIcon image1;
                 isChanged = true;
                 this.repaint();
-                statusLabel.setForeground(Color.BLACK);
+                statusLabel.setForeground(Color.cyan);
                 button1.setBackground(Color.cyan.darker());
                 button1.setOpaque(true);
                 button1.setBorderPainted(true);
@@ -219,11 +219,11 @@ public class ChessGameFrame extends JFrame {
                 change.setBackground(Color.cyan.darker());
                 change.setOpaque(true);
                 change.setBorderPainted(true);
-                ImageIcon icon2=new ImageIcon("./images/Background.jpg");
+                ImageIcon icon2 = new ImageIcon("./images/Background.jpg");
                 label.setIcon(icon2);
-                icon2.setImage(icon2.getImage().getScaledInstance(1000,760 , Image.SCALE_DEFAULT));
+                icon2.setImage(icon2.getImage().getScaledInstance(1000, 760, Image.SCALE_DEFAULT));
                 label.setHorizontalAlignment(SwingConstants.CENTER);
-                label.setSize(1000,760);
+                label.setSize(1000, 760);
                 label.setOpaque(true);
                 add(label);
                 this.repaint();
@@ -232,30 +232,30 @@ public class ChessGameFrame extends JFrame {
                 ImageIcon image2;
                 isChanged = false;
                 this.repaint();
-                statusLabel.setForeground(Color.WHITE);
-                button1.setBackground(Color.green.darker());
+                statusLabel.setForeground(Color.PINK);
+                button1.setBackground(Color.WHITE);
                 button1.setOpaque(true);
                 button1.setBorderPainted(true);
-                button2.setBackground(Color.green.darker());
+                button2.setBackground(Color.WHITE);
                 button2.setOpaque(true);
                 button2.setBorderPainted(true);
-                button3.setBackground(Color.green.darker());
+                button3.setBackground(Color.WHITE);
                 button3.setOpaque(true);
                 button3.setBorderPainted(true);
-                button4.setBackground(Color.green.darker());
+                button4.setBackground(Color.WHITE);
                 button4.setOpaque(true);
                 button4.setBorderPainted(true);
-                button5.setBackground(Color.green.darker());
+                button5.setBackground(Color.WHITE);
                 button5.setOpaque(true);
                 button5.setBorderPainted(true);
-                change.setBackground(Color.green.darker());
+                change.setBackground(Color.WHITE);
                 change.setOpaque(true);
                 change.setBorderPainted(true);
-                ImageIcon icon1=new ImageIcon("./images/Background1.jpg");
+                ImageIcon icon1 = new ImageIcon("./images/Background1.jpg");
                 label.setIcon(icon1);
-                icon1.setImage(icon1.getImage().getScaledInstance(1000,760 , Image.SCALE_DEFAULT));
+                icon1.setImage(icon1.getImage().getScaledInstance(1000, 760, Image.SCALE_DEFAULT));
                 label.setHorizontalAlignment(SwingConstants.CENTER);
-                label.setSize(1000,760);
+                label.setSize(1000, 760);
                 label.setOpaque(true);
                 add(label);
                 this.repaint();
@@ -263,7 +263,7 @@ public class ChessGameFrame extends JFrame {
         });
     }
 
-        //todo: 下拉选项菜单
+    //todo: 下拉选项菜单
     private void addMenu() {
         JMenuBar menuBar = new JMenuBar();
         JMenu menu = new JMenu("Menu");
@@ -308,46 +308,45 @@ public class ChessGameFrame extends JFrame {
         });
     }
 
-        private void addBackground(){
-            ImageIcon icon=new ImageIcon("./images/Background1.jpg");
-            label.setIcon(icon);
-      icon.setImage(icon.getImage().getScaledInstance(1000,760 , Image.SCALE_DEFAULT));
-           label.setHorizontalAlignment(SwingConstants.CENTER);
-            label.setSize(1000,760);
+    private void addBackground() {
+        ImageIcon icon = new ImageIcon("./images/Background1.jpg");
+        label.setIcon(icon);
+        icon.setImage(icon.getImage().getScaledInstance(1000, 760, Image.SCALE_DEFAULT));
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        label.setSize(1000, 760);
 //            this.setLocationRelativeTo(null);
-            label.setOpaque(true);
-            add(label);
-        }
+        label.setOpaque(true);
+        add(label);
+    }
 
-        //        bgp= new BackgroundPanel((new ImageIcon("images\\Background1.jpg")).getImage());
+    //        bgp= new BackgroundPanel((new ImageIcon("images\\Background1.jpg")).getImage());
 //        bgp.setBounds(0, 0, WIDTH, HEIGTH);
 //        ct.add(bgp);
-
 
 
     /**
      * Change the player
      */
 
-    protected static void changeLabel(){
-        if (getCurrentColor() == ChessColor.WHITE){
+    protected static void changeLabel() {
+        if (getCurrentColor() == ChessColor.WHITE) {
             statusLabel.setText("BLACK'S ROUND");
         }
-        if (getCurrentColor() == ChessColor.BLACK){
+        if (getCurrentColor() == ChessColor.BLACK) {
             statusLabel.setText("WHITE'S ROUND");
         }
     }
 
-    private void writeFiles(ArrayList<String> transfer){
-        int num=1;
-        FileWriter writer=null;
-        String path="resource/save"+num+".txt";
+    private void writeFiles(ArrayList<String> transfer) {
+        int num = 1;
+        FileWriter writer = null;
+        String path = "resource/save" + num + ".txt";
         try {
             File file = new File(path);
             System.out.println("01");
             while (file.exists()) {
                 num++;
-                path=new String("resource/save"+num+".txt");
+                path = new String("resource/save" + num + ".txt");
                 file = new File(path);
                 System.out.println("02");
             }
@@ -358,7 +357,7 @@ public class ChessGameFrame extends JFrame {
             System.out.println(transfer.size());
             for (int i = 0; i < transfer.size(); i++) {
 
-                String str= transfer.get(i).toString()+"\n";
+                String str = transfer.get(i).toString() + "\n";
 
                 System.out.println(transfer.size());
                 System.out.println("04");
@@ -367,23 +366,19 @@ public class ChessGameFrame extends JFrame {
             }
             writer.close();
             System.out.println(file.getPath());
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void dead1(String warning){
-        JOptionPane window = new JOptionPane();
-        ImageIcon icon = new ImageIcon("./images/Win.png");
-        JOptionPane.showMessageDialog(null,warning,"Winner,",JOptionPane.PLAIN_MESSAGE,icon);
+    public static void dead1(String warning) {
+        ImageIcon icon = new ImageIcon("./images/checked.png");
+         JOptionPane.showMessageDialog(null, warning, "CHECK", JOptionPane.PLAIN_MESSAGE, icon);
     }
 
     public static void dead2(String warning) {
-        int result = JOptionPane.showOptionDialog(null, warning, "Next Step", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, new String[]{"Restart the game"}, null);
-        if (result == JOptionPane.OK_OPTION) {
-            System.exit(0);
-            System.exit(0);
-        }
+        ImageIcon icon = new ImageIcon("./images/Win.png");
+        int result = JOptionPane.showOptionDialog(null, warning, "Winner", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, icon, new String[]{"Restart the game"}, null);
     }
 }
 

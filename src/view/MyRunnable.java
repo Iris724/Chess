@@ -45,12 +45,11 @@ public class MyRunnable implements Runnable{
                     blackTurn();
                 }
                 chessGameFrame.repaint();
-                Thread.sleep(2000);
-
-
+                Thread.sleep(500);
             } catch (Exception e) {
 
             }
+            chessGameFrame.repaint();
         }
         chessGameFrame.getGameController().getChessboard().Reset();
         whiteTurn();

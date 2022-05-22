@@ -6,10 +6,12 @@ import view.Chessboard;
 import view.ChessboardPoint;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ClickController {
     private final Chessboard chessboard;
     private ChessComponent first;
+    private ChessComponent chessComponent;
 
     public ClickController(Chessboard chessboard) {
         this.chessboard = chessboard;

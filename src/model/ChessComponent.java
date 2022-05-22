@@ -30,7 +30,7 @@ public abstract class ChessComponent extends JComponent {
 
 //    private static final Dimension CHESSGRID_SIZE = new Dimension(1080 / 4 * 3 / 8, 1080 / 4 * 3 / 8);
     private static final Color[] BACKGROUND_COLORS = {Color.WHITE, Color.BLACK};
-    private static final Color[] BACKGROUND_COLORS1 = {Color.WHITE,Color.CYAN};
+    private static final Color[] BACKGROUND_COLORS1 = {Color.LIGHT_GRAY,Color.CYAN};
     /**
      * handle click event
      */
@@ -59,6 +59,7 @@ public abstract class ChessComponent extends JComponent {
     private ChessboardPoint chessboardPoint;
     protected final ChessColor chessColor;
     private boolean selected;
+    public List<ChessboardPoint> canMoToPoints ;
 
     protected ChessComponent(ChessboardPoint chessboardPoint, Point location, ChessColor chessColor, ClickController clickController, int size) {
         enableEvents(AWTEvent.MOUSE_EVENT_MASK);
@@ -193,6 +194,23 @@ public abstract class ChessComponent extends JComponent {
         }
     }
 
+
+    public List<ChessboardPoint> getCanMoToPoints() {
+        return canMoToPoints;
+    }
+
+    public List<ChessboardPoint> canMoveToPoints(ChessComponent[][] chessComponents){
+        ChessboardPoint source = getChessboardPoint();
+        int row = source.getX(); int col = source.getY();
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (chessComponents[row][col].canMoveTo(chessComponents,new ChessboardPoint(i,j))){
+                    canMoToPoints.add(new ChessboardPoint(i,j));
+                }
+            }
+        }
+        return canMoToPoints;
+    }
 
 
 }

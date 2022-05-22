@@ -38,6 +38,7 @@ public class Chessboard extends JComponent {
     private static final int CHESSBOARD_SIZE = 8;
 
 
+
     private final ChessComponent[][] chessComponents = new ChessComponent[CHESSBOARD_SIZE][CHESSBOARD_SIZE];
     private static ChessColor currentColor = ChessColor.WHITE;
     //all chessComponents in this chessboard are shared only one model controller
@@ -45,6 +46,7 @@ public class Chessboard extends JComponent {
     public final int CHESS_SIZE;
     public boolean whiteWin;
     public boolean blackWin;
+//    public boolean checked;
 
 
     public static void setCurrentColor(ChessColor currentColor) {
@@ -132,6 +134,8 @@ public class Chessboard extends JComponent {
     }
 
 
+
+
     public static ChessColor getCurrentColor() {
         return currentColor;
     }
@@ -174,12 +178,29 @@ public class Chessboard extends JComponent {
         repaint();
     }
 
-//    public boolean ifPawnPromotion(ChessComponent chess1,ChessComponent chess2){
-//        if (chess1 instanceof PawnChessComponent && (chess2.getChessboardPoint().getX() == 7 || chess2.getChessboardPoint().getX() == 0)){
-//            return true;
-//        }
-//        return false;
-//    }
+    //判断将军
+    public boolean isChecked(ChessComponent attacker){
+        ChessboardPoint checkedKing = new ChessboardPoint(8,8);
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (chessComponents[i][j] instanceof KingChessComponent && chessComponents[i][j].getChessColor() != currentColor){
+                    checkedKing = new ChessboardPoint(i,j);
+                }
+            }
+        }
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                attacker = chessComponents[i][j];
+                if (attacker.canMoveTo(chessComponents,checkedKing) && attacker.getChessColor() == currentColor){
+
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
     //FIXME: store what we have done in the arraylist storingSteps
     public void swapChessComponents(ChessComponent chess1, ChessComponent chess2) {
         if (ifPassBy(chess1, chess2)) {
@@ -211,10 +232,10 @@ public class Chessboard extends JComponent {
             chess2.repaint();
             changeLabel();
         } else if (!(ifPassBy(chess1,chess2))) {
-            if (chess2 instanceof KingChessComponent){
+            if (chess2 instanceof KingChessComponent) {
                 if (currentColor == ChessColor.BLACK) {
                     blackWin = true;
-                }else if (currentColor == ChessColor.WHITE){
+                } else if (currentColor == ChessColor.WHITE) {
                     whiteWin = true;
                 }
             }
@@ -234,29 +255,38 @@ public class Chessboard extends JComponent {
             storeThisStep(row1, col1, row2, col2);
             chess1.repaint();
             chess2.repaint();
+            //将军警告
+            if (isChecked(chess1)) {
+                if (currentColor == ChessColor.BLACK) {
+                    dead1("The white king is checked!");
+                }
+                if (currentColor == ChessColor.WHITE) {
+                    dead1("The black king is checked!");
+                }
+            }
+            //判断胜负
             String warning1 = "The black win!";
             String warning2 = "The white win!";
             if (blackWin){
                 dead2(warning1);
                 Reset();
-                storingSteps.clear();
-                storingSteps.add("R0H0B0Q0K0B0H0R0#P0P0P0P0P0P0P0P0#e0e0e0e0e0e0e0e0#e0e0e0e0e0e0e0e0#e0e0e0e0e0e0e0e0#e0e0e0e0e0e0e0e0#p0p0p0p0p0p0p0p0#r0h0b0q0k0b0h0r0#1#0000#");
+//                storingSteps.clear();
+//                storingSteps.add("R0H0B0Q0K0B0H0R0#P0P0P0P0P0P0P0P0#e0e0e0e0e0e0e0e0#e0e0e0e0e0e0e0e0#e0e0e0e0e0e0e0e0#e0e0e0e0e0e0e0e0#p0p0p0p0p0p0p0p0#r0h0b0q0k0b0h0r0#1#0000#");
 
                 setCurrentColor(ChessColor.BLACK);
-                whiteTurn();
+                blackTurn();
                 repaint();
                 blackWin = false;
             }else if (whiteWin){
                 dead2(warning2);
                 Reset();
-                storingSteps.clear();
-                storingSteps.add("R0H0B0Q0K0B0H0R0#P0P0P0P0P0P0P0P0#e0e0e0e0e0e0e0e0#e0e0e0e0e0e0e0e0#e0e0e0e0e0e0e0e0#e0e0e0e0e0e0e0e0#p0p0p0p0p0p0p0p0#r0h0b0q0k0b0h0r0#1#0000#");
-
-                setCurrentColor(ChessColor.WHITE);
-                blackTurn();
+//                storingSteps.clear();
+//                storingSteps.add("R0H0B0Q0K0B0H0R0#P0P0P0P0P0P0P0P0#e0e0e0e0e0e0e0e0#e0e0e0e0e0e0e0e0#e0e0e0e0e0e0e0e0#e0e0e0e0e0e0e0e0#p0p0p0p0p0p0p0p0#r0h0b0q0k0b0h0r0#1#0000#");
+                setCurrentColor(ChessColor.BLACK);
+                whiteTurn();
                 whiteWin = false;
+                repaint();
             }
-
             changeLabel();
         }
     }
@@ -266,6 +296,11 @@ public class Chessboard extends JComponent {
     public void blackTurn(){
         statusLabel.setText("BLACK'S ROUND");
     }
+
+
+
+
+
     public void redo(){
         //悔棋步骤可能也会存进storingSteps里面
 
@@ -410,10 +445,6 @@ public class Chessboard extends JComponent {
     }
 
 
-
-    private void correctLoadFile(){
-
-    }
 
 
     @Override
@@ -614,7 +645,6 @@ public class Chessboard extends JComponent {
     public void changeR(ChessboardPoint source , ChessComponent chess1){
         int row = source.getX();
         int col = source.getY();
-
         if (!(chessComponents[row][col] instanceof PawnChessComponent)) {
             remove(chessComponents[row][col]);
             chessComponents[row][col] = chess1;
@@ -632,32 +662,5 @@ public class Chessboard extends JComponent {
             chess1.repaint();
         }
     }
-
-
-
-    public ChessboardPoint findCheckKing () {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                ChessComponent king = chessComponents[i][j];
-                if (king instanceof KingChessComponent && king.getChessColor() != currentColor){
-                    return new ChessboardPoint(i,j);
-                }
-            }
-        }
-        return null;
-    }
-
-//    public boolean ifChecked(ChessComponent[][] chessComponents,ChessComponent attacker){
-//        if (attacker.canMoveTo(chessComponents,findCheckKing())){
-//            JOptionPane.showMessageDialog(this, "CHECKED!");
-//
-//        }
-//    }
-
-
 }
 
-
-//    public boolean ifChecked (ChessComponent[][] chessComponents, )
-//
-//}
