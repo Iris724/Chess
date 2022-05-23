@@ -11,10 +11,11 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static view.Chessboard.getCurrentColor;
-import static view.Chessboard.setCurrentColor;
 
 /**
  * 这个类表示游戏过程中的整个游戏界面，是一切的载体
@@ -32,7 +33,9 @@ public class ChessGameFrame extends JFrame {
     private GameController gameController;
     private ChessColor currentColor = ChessColor.WHITE;
     private ChessComponent chessComponent;
+    private Chessboard chessboard;
     static JLabel statusLabel = new JLabel();
+    static JLabel countingTime = new JLabel();
     static JButton button1 = new JButton("Load");
     static JButton button2 = new JButton("Reset");
     static JButton button3 = new JButton("Save");
@@ -41,6 +44,7 @@ public class ChessGameFrame extends JFrame {
     static JButton change = new JButton("Change Theme");
     static JLabel label = new JLabel();
     public static boolean isChanged;
+    public static int time = 60;
     public ChessGameFrame chessGameFrame;
     Music audioPlayWave1 = new Music("沐烟清 - 四小天鹅舞曲（柴可夫斯基）.wav");
 
@@ -79,14 +83,32 @@ public class ChessGameFrame extends JFrame {
     }
 
     /**
-     * 在游戏面板中添加棋盘
+     * 在游戏面板中添加棋盘和计时器
      */
     private void addChessboard() {
-        Chessboard chessboard = new Chessboard(CHESSBOARD_SIZE, CHESSBOARD_SIZE);
+        chessboard = new Chessboard(CHESSBOARD_SIZE, CHESSBOARD_SIZE);
         gameController = new GameController(chessboard);
         chessboard.setLocation(HEIGTH / 10, HEIGTH / 10);
-        this.setVisible(true);
         add(chessboard);
+        countingTime.setLocation(HEIGTH, 10);
+        countingTime.setSize(200, 60);
+        countingTime.setFont(new Font("Rockwell", Font.BOLD, 30));
+        countingTime.setForeground(Color.BLACK);
+        add(countingTime);
+        setVisible(true);
+        java.util.Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            public void run() {
+                countingTime.setText("Time left: " + time);
+                time--;
+                if (time < 0) {
+                    countingTime.setText("Time Over");
+                    changeLabel();
+                    chessboard.swapColor();
+                    time =60;
+                }
+            }
+        }, 0, 1000);
     }
 
     /**
@@ -97,7 +119,7 @@ public class ChessGameFrame extends JFrame {
         statusLabel.setLocation(10, 10);
         statusLabel.setSize(300, 60);
         statusLabel.setFont(new Font("Rockwell", Font.BOLD, 20));
-        statusLabel.setForeground(Color.WHITE);
+        statusLabel.setForeground(Color.pink);
         this.setVisible(true);
         add(statusLabel);
     }
@@ -118,6 +140,9 @@ public class ChessGameFrame extends JFrame {
             System.out.println("Click load");
             String path = JOptionPane.showInputDialog(this, "Input Path here");
             gameController.loadGameFromFile(path);
+            chessboard.setCurrentColor(ChessColor.WHITE);
+            statusLabel.setText("WHITE's round");
+            time =60;
         });
     }
 
@@ -128,6 +153,8 @@ public class ChessGameFrame extends JFrame {
             System.out.println("reset");
             String path = "resource/reset.txt";
             gameController.loadGameFromFile(path);
+            statusLabel.setText("WHITE'S ROUND");
+            time = 60;
         });
         button2.setLocation(HEIGTH, HEIGTH / 10 + 50);
         button2.setSize(200, 40);
@@ -201,6 +228,7 @@ public class ChessGameFrame extends JFrame {
                 isChanged = true;
                 this.repaint();
                 statusLabel.setForeground(Color.cyan);
+                countingTime.setForeground(Color.cyan);
                 button1.setBackground(Color.cyan.darker());
                 button1.setOpaque(true);
                 button1.setBorderPainted(true);
@@ -233,6 +261,7 @@ public class ChessGameFrame extends JFrame {
                 isChanged = false;
                 this.repaint();
                 statusLabel.setForeground(Color.PINK);
+                countingTime.setForeground(Color.BLACK);
                 button1.setBackground(Color.WHITE);
                 button1.setOpaque(true);
                 button1.setBorderPainted(true);
@@ -337,6 +366,12 @@ public class ChessGameFrame extends JFrame {
         }
     }
 
+    public void setTime2(int i) {
+        time = i;
+
+    }
+
+
     private void writeFiles(ArrayList<String> transfer) {
         int num = 1;
         FileWriter writer = null;
@@ -372,7 +407,7 @@ public class ChessGameFrame extends JFrame {
     }
 
     public static void dead1(String warning) {
-        ImageIcon icon = new ImageIcon("./images/checked.png");
+        ImageIcon icon = new ImageIcon("./images/checked(1).png");
          JOptionPane.showMessageDialog(null, warning, "CHECK", JOptionPane.PLAIN_MESSAGE, icon);
     }
 

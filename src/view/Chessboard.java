@@ -46,6 +46,7 @@ public class Chessboard extends JComponent {
     public final int CHESS_SIZE;
     public boolean whiteWin;
     public boolean blackWin;
+    public boolean ifSwap;
 //    public boolean checked;
 
 
@@ -178,7 +179,7 @@ public class Chessboard extends JComponent {
         repaint();
     }
 
-    //判断将军
+    //判断将军（下子即将）
     public boolean isChecked(ChessComponent attacker){
         ChessboardPoint checkedKing = new ChessboardPoint(8,8);
         for (int i = 0; i < 8; i++) {
@@ -192,6 +193,28 @@ public class Chessboard extends JComponent {
             for (int j = 0; j < 8; j++) {
                 attacker = chessComponents[i][j];
                 if (attacker.canMoveTo(chessComponents,checkedKing) && attacker.getChessColor() == currentColor){
+
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    //判断将军（有子可将）
+    public boolean isChecked1(ChessComponent attacker){
+        ChessboardPoint checkedKing = new ChessboardPoint(8,8);
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (chessComponents[i][j] instanceof KingChessComponent && chessComponents[i][j].getChessColor() == currentColor){
+                    checkedKing = new ChessboardPoint(i,j);
+                }
+            }
+        }
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                attacker = chessComponents[i][j];
+                if (attacker.canMoveTo(chessComponents,checkedKing) && attacker.getChessColor() != currentColor){
 
                     return true;
                 }
@@ -263,6 +286,22 @@ public class Chessboard extends JComponent {
                 if (currentColor == ChessColor.WHITE) {
                     dead1("The black king is checked!");
                 }
+            }else if (!isChecked(chess1)){
+                for (int i = 0; i < 8; i++) {
+                    for (int j = 0; j < 8; j++) {
+                       ChessComponent chess =  chessComponents[i][j];
+                       if (isChecked1(chess)){
+                           if (currentColor == ChessColor.WHITE) {
+                               dead1("The white king is checked!");
+                               return;
+                           }
+                           if (currentColor == ChessColor.BLACK) {
+                               dead1("The black king is checked!");
+                               return;
+                           }
+                       }
+                    }
+                }
             }
             //判断胜负
             String warning1 = "The black win!";
@@ -296,9 +335,6 @@ public class Chessboard extends JComponent {
     public void blackTurn(){
         statusLabel.setText("BLACK'S ROUND");
     }
-
-
-
 
 
     public void redo(){

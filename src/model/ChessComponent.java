@@ -3,7 +3,6 @@ package model;
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 import view.ChessGameFrame;
-import view.Chessboard;
 import view.ChessboardPoint;
 import controller.ClickController;
 
@@ -129,6 +128,7 @@ public abstract class ChessComponent extends JComponent {
         setLocation(point2);
         another.setChessboardPoint(chessboardPoint1);
         another.setLocation(point1);
+        ChessGameFrame.time = 60;
     }
 
     /**
